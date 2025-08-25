@@ -73,7 +73,7 @@ body {
 .led-yellow { color: #ffd24d; background: #ffd24d; }
 .led-green { color: #3dff9b; background: #3dff9b; }
 
-.chrome-body { padding: 64px 28px 36px; text-align: center; }
+.chrome-body { padding: 64px 28px 36px; text-align: center; position: relative; overflow: hidden; }
 
 .headline {
   font-family: "VT323", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -90,7 +90,7 @@ body {
 }
 
 .headline .spin {
-  position: fixed;
+  position: absolute;
   left: 0;
   top: 0;
   display: inline-block;

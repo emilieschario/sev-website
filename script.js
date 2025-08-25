@@ -8,22 +8,23 @@
   let lastTs = 0;
   let posX = 0, posY = 0; // top-left position in px within container
   let textRect = { w: 0, h: 0 };
+  const safetyMargin = 20; // px cushion to avoid clipping on right/bottom during tilt/scale
 
   function resize() {
     width = canvas.width = window.innerWidth;
     height = canvas.height = window.innerHeight;
     initStars();
     // Update bounds for bouncing text
-    // Bounce across the viewport
-    containerEl = document.documentElement;
+    // Bounce within the chrome body area
+    containerEl = document.querySelector('.chrome-body');
     if (!spinEl) spinEl = document.querySelector('.headline .spin');
     if (spinEl) {
       textRect = { w: spinEl.offsetWidth, h: spinEl.offsetHeight };
-      const hostW = window.innerWidth;
-      const hostH = window.innerHeight;
+      const hostW = containerEl.clientWidth;
+      const hostH = containerEl.clientHeight;
       if (posX === 0 && posY === 0) {
-        posX = (hostW - textRect.w) * 0.5;
-        posY = (hostH - textRect.h) * 0.5;
+        posX = Math.max(safetyMargin, (hostW - textRect.w) * 0.5);
+        posY = Math.max(safetyMargin, (hostH - textRect.h) * 0.5);
       }
     }
   }
@@ -62,24 +63,23 @@
 
     // Bouncing text motion inside .chrome-body
     if (spinEl && containerEl) {
-      const hostW = window.innerWidth;
-      const hostH = window.innerHeight;
-      if (textRect.w === 0 || textRect.h === 0) {
-        textRect = { w: spinEl.offsetWidth, h: spinEl.offsetHeight };
-      }
+      const hostW = containerEl.clientWidth;
+      const hostH = containerEl.clientHeight;
+      // Recalculate occasionally in case fonts/layout shift
+      textRect = { w: spinEl.offsetWidth, h: spinEl.offsetHeight };
 
       posX += velocityX * dt;
       posY += velocityY * dt;
 
       let bounced = false;
-      if (posX <= 0 || posX + textRect.w >= hostW) {
+      if (posX <= safetyMargin || posX + textRect.w + safetyMargin >= hostW) {
         velocityX *= -1;
-        posX = Math.max(0, Math.min(hostW - textRect.w, posX));
+        posX = Math.max(safetyMargin, Math.min(hostW - textRect.w - safetyMargin, posX));
         bounced = true;
       }
-      if (posY <= 0 || posY + textRect.h >= hostH) {
+      if (posY <= safetyMargin || posY + textRect.h + safetyMargin >= hostH) {
         velocityY *= -1;
-        posY = Math.max(0, Math.min(hostH - textRect.h, posY));
+        posY = Math.max(safetyMargin, Math.min(hostH - textRect.h - safetyMargin, posY));
         bounced = true;
       }
 
@@ -88,7 +88,10 @@
       const tiltY = (velocityY / speed) * -12;
       const squash = bounced ? 1.15 : 1.0;
 
-      spinEl.style.transform = `translate(${posX}px, ${posY}px) perspective(600px) rotateX(${tiltY}deg) rotateY(${tiltX}deg) scale(${squash}, ${1 / squash})`;
+      // Position via left/top so clamping matches visual edges precisely
+      spinEl.style.left = `${posX}px`;
+      spinEl.style.top = `${posY}px`;
+      spinEl.style.transform = `perspective(600px) rotateX(${tiltY}deg) rotateY(${tiltX}deg) scale(${squash}, ${1 / squash})`;
     }
 
     requestAnimationFrame(step);
