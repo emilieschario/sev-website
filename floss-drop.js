@@ -2,13 +2,6 @@
   const forms = Array.from(document.querySelectorAll('.join-form'));
   if (!forms.length) return;
 
-  function setStatus(message, kind) {
-    if (!statusEl) return;
-    statusEl.textContent = message || '';
-    statusEl.classList.remove('success', 'error', 'loading');
-    if (kind) statusEl.classList.add(kind);
-  }
-
   function isValidEmail(value) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
   }
@@ -48,11 +41,10 @@
   forms.forEach(function(form) {
     const emailInput = form.querySelector('input[type="email"]');
     const statusEl = form.nextElementSibling && form.nextElementSibling.classList.contains('notice') ? form.nextElementSibling : null;
-    form.addEventListener('click', async function(e) {
-      const target = e.target;
-      if (!(target instanceof HTMLElement)) return;
-      const action = target.getAttribute('data-action');
-      if (!action) return;
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const submitButton = form.querySelector('[data-action]');
+      const action = submitButton ? submitButton.getAttribute('data-action') : 'waitlist';
       const email = emailInput.value.trim();
       if (!isValidEmail(email)) {
         alert('Please enter a valid email address.');
