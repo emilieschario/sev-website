@@ -16,7 +16,7 @@ body {
 
 /* Top navigation */
 .site-nav { position: sticky; top: 0; z-index: 100; background: var(--accent); box-shadow: 0 1px 0 rgba(0,0,0,0.06); }
-.site-nav .nav-wrap { max-width: 1200px; margin: 0 auto; padding: 0 18px; display: flex; align-items: center; height: 56px; }
+.site-nav .nav-wrap { max-width: none; margin: 0; padding: 0 18px 0 72px; display: flex; align-items: center; height: 56px; }
 .site-nav .brand { color: #fff; font-family: 'Bebas Neue', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; font-size: 28px; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 900; }
 
 .page {
@@ -65,6 +65,15 @@ body {
   font-size: clamp(18px, 2.8vw, 32px);
   color: #1e2024;
 }
+
+.micro-note {
+  margin: 2px 0 0;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+/* Tighten spacing between hero and micro-note */
+.left .hero + .micro-note { margin-top: -10px; }
 
 .motto {
   margin: 6px 0 0;
@@ -179,6 +188,7 @@ body {
 .segment .media { flex: 0.95; }
 .segment .media img { width: 100%; height: auto; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
 .segment:nth-child(even) { flex-direction: row-reverse; }
+.segment.media-left { flex-direction: row; }
 .seg-title { margin: 0 0 10px; font-size: 28px; font-weight: 900; }
 
 @media (max-width: 900px) {
