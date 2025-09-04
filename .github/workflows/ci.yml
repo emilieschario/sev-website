@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, "feat/**", "fix/**", "chore/**" ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  content-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate repository layout
+        run: |
+          test -f index.html
+          test -f floss-drop.html
+          test -f floss-drop/index.html
+
+      - name: Run static content checks
+        run: bash ci/check_content.sh
+
+
